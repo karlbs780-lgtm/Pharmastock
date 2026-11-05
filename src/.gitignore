@@ -1,0 +1,15 @@
+# Visual Studio / .NET
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+packages/
+*.cache
+
+# Resultats de build
+[Dd]ebug/
+[Rr]elease/
+*.dll
+*.exe
+*.pdb
