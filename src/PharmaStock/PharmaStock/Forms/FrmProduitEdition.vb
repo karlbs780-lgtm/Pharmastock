@@ -12,6 +12,27 @@ Partial Public Class FrmProduitEdition
         InitializeComponent()
         cboStatut.Items.AddRange(New Object() {"homologue", "non_homologue", "retire"})
         cboStatut.SelectedIndex = 0
+        ChargerTableaux()
+    End Sub
+
+    ' Liste "Non (produit libre)" + tableaux I a IV. Un produit classe dans un
+    ' tableau est enregistre a l'ordonnancier lors de chaque vente.
+    Private Sub ChargerTableaux()
+        Dim dt As New System.Data.DataTable()
+        dt.Columns.Add("id_tableau", GetType(Integer))
+        dt.Columns.Add("libelle", GetType(String))
+        dt.Rows.Add(0, "Non (produit libre)")
+        Try
+            For Each r As System.Data.DataRow In New ProduitRepository().ListerTableaux().Rows
+                dt.Rows.Add(Convert.ToInt32(r("id_tableau")), Convert.ToString(r("libelle")))
+            Next
+        Catch ex As Exception
+            MessageBox.Show("Impossible de charger les tableaux : " & ex.Message, "PharmaStock",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        End Try
+        cboTableau.DataSource = dt
+        cboTableau.DisplayMember = "libelle"
+        cboTableau.ValueMember = "id_tableau"
     End Sub
 
     Public Sub New(produitAModifier As Produit)
@@ -41,6 +62,7 @@ Partial Public Class FrmProduitEdition
         numPrixVente.Value = Borner(_edition.PrixVente, numPrixVente)
         numSeuil.Value = Borner(_edition.SeuilMin, numSeuil)
         chkOrdonnance.Checked = _edition.SurOrdonnance
+        cboTableau.SelectedValue = If(_edition.IdTableau, 0)
         chkActif.Checked = _edition.Actif
     End Sub
 
@@ -71,6 +93,10 @@ Partial Public Class FrmProduitEdition
         p.PrixVente = numPrixVente.Value
         p.SeuilMin = Convert.ToInt32(numSeuil.Value)
         p.SurOrdonnance = chkOrdonnance.Checked
+        Dim idTab As Integer = If(cboTableau.SelectedValue Is Nothing, 0, Convert.ToInt32(cboTableau.SelectedValue))
+        p.IdTableau = If(idTab > 0, CType(idTab, Integer?), Nothing)
+        ' Une substance reglementee est toujours delivree sur ordonnance.
+        If p.IdTableau.HasValue Then p.SurOrdonnance = True
         p.Actif = chkActif.Checked
 
         Me.Produit = p

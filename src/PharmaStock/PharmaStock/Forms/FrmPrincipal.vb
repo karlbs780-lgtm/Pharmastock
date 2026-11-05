@@ -9,6 +9,19 @@ Partial Public Class FrmPrincipal
         InitializeComponent()
         _utilisateur = utilisateur
         lblStatut.Text = $"Connecté : {_utilisateur.Nom} ({_utilisateur.Role})"
+        AppliquerDroits()
+    End Sub
+
+    ' Acces par role : l'employe vend, gere les clients et consulte le stock ;
+    ' le catalogue, les fournisseurs, les receptions et l'ordonnancier sont
+    ' reserves a l'administrateur (pharmacien titulaire).
+    Private Sub AppliquerDroits()
+        Dim admin As Boolean = _utilisateur.EstAdministrateur
+        mnuProduits.Visible = admin
+        mnuFournisseurs.Visible = admin
+        mnuLivraison.Visible = admin
+        mnuOrdonnancier.Visible = admin
+        mnuReglementaire.Visible = admin
     End Sub
 
     Private Sub mnuProduits_Click(sender As Object, e As EventArgs) Handles mnuProduits.Click

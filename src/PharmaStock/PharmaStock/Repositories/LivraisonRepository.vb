@@ -9,10 +9,27 @@ Public Class LivraisonRepository
     Public Function Enregistrer(idFournisseur As Integer, idCommande As Integer?, numeroBon As String,
                                 dateLivraison As Date, idUtilisateur As Integer,
                                 lignes As List(Of LigneLivraison)) As Integer
+        ' Controles metier avant toute ecriture : pas de lot deja perime.
+        For Each l In lignes
+            If l.DatePeremption.Date <= Date.Today OrElse l.DatePeremption.Date <= dateLivraison.Date Then
+                Throw New InvalidOperationException(
+                    $"Lot {l.NumeroLot} refusé : date de péremption ({l.DatePeremption:d}) dépassée ou atteinte.")
+            End If
+        Next
+
         Using cn = Database.CreerConnexion()
             cn.Open()
             Using tx = cn.BeginTransaction()
                 Try
+                    ' RG-12 : reception uniquement aupres d'un fournisseur agree et actif.
+                    Using cmd As New MySqlCommand(
+                        "SELECT COUNT(*) FROM fournisseur WHERE id_fournisseur = @f AND agree = 1 AND actif = 1", cn, tx)
+                        cmd.Parameters.AddWithValue("@f", idFournisseur)
+                        If Convert.ToInt32(cmd.ExecuteScalar()) = 0 Then
+                            Throw New InvalidOperationException("Fournisseur non agréé ou inactif : réception refusée.")
+                        End If
+                    End Using
+
                     Dim statut As String = "complete"
                     For Each l In lignes
                         If l.QuantiteConforme < l.QuantiteLivree Then statut = "partielle"

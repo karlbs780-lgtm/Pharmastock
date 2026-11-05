@@ -36,6 +36,7 @@ Partial Public Class FrmProduits
         RenommerColonne("seuil_min", "Seuil min")
         RenommerColonne("statut_homologation", "Homologation")
         RenommerColonne("sur_ordonnance", "Ordonnance")
+        RenommerColonne("id_tableau", "Tableau", visible:=False)
         RenommerColonne("actif", "Actif")
     End Sub
 
@@ -115,6 +116,7 @@ Partial Public Class FrmProduits
             .NumeroAmm = TexteCellule(r, "numero_amm"),
             .StatutHomologation = TexteCellule(r, "statut_homologation"),
             .SurOrdonnance = BooleenCellule(r, "sur_ordonnance"),
+            .IdTableau = If(EntierCellule(r, "id_tableau") > 0, CType(EntierCellule(r, "id_tableau"), Integer?), Nothing),
             .PrixAchat = DecimalCellule(r, "prix_achat"),
             .PrixVente = DecimalCellule(r, "prix_vente"),
             .SeuilMin = EntierCellule(r, "seuil_min"),

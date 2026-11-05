@@ -18,6 +18,11 @@ Public Class FournisseurRepository
         Return Database.ExecuterTable("SELECT id_fournisseur, nom FROM fournisseur WHERE actif = 1 ORDER BY nom")
     End Function
 
+    ' Fournisseurs actifs ET agrees : seuls autorises pour une reception (RG-12).
+    Public Function ListerAgrees() As DataTable
+        Return Database.ExecuterTable("SELECT id_fournisseur, nom FROM fournisseur WHERE actif = 1 AND agree = 1 ORDER BY nom")
+    End Function
+
     Public Function Inserer(f As Fournisseur) As Integer
         Return Database.ExecuterNonQuery(
             "INSERT INTO fournisseur (nom, agree, telephone, email, adresse, actif) " &

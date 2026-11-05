@@ -56,11 +56,12 @@ mysql -u root -p pharmastock < src/comptes_demo.sql
 ### Règles appliquées automatiquement (triggers & vues)
 
 - **Stock en temps réel** et mise à jour automatique de `lot.quantite` à chaque mouvement ; lot en `epuise` à zéro.
-- **FEFO** : le lot à péremption la plus proche sort en premier.
+- **FEFO** : le lot à péremption la plus proche sort en premier ; une quantité est répartie sur plusieurs lots si nécessaire ; **un lot périmé ne peut plus être vendu** (seule la destruction reste possible).
 - **Alertes** : rupture (stock ≤ seuil minimal) et péremption (< 90 jours).
 - Stock jamais négatif ; **sortie refusée** si stock insuffisant.
 - **Ordonnancier et journal inaltérables** (ni modification ni suppression) — conservation 10 ans.
-- Réceptions rattachées à un fournisseur agréé ; mots de passe chiffrés ; accès par rôle.
+- Réceptions uniquement auprès d'un fournisseur agréé, refus des lots déjà périmés ; mots de passe chiffrés.
+- **Accès par rôle** : l'employé a accès aux clients, aux ventes et au stock ; produits, fournisseurs, livraisons et ordonnancier sont réservés à l'administrateur.
 
 ## Architecture de l'application (couches)
 
