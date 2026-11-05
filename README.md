@@ -12,6 +12,8 @@ Projet de groupe — module *Introduction au génie logiciel*.
 | `pharmastock_triggers_et_donnees_test.sql` | Déclencheurs (triggers) + jeu de données de test. À exécuter **après** `pharmastock.sql`. |
 | `src/` | Application VB.NET (WinForms) — solution Visual Studio, voir [`src/README.md`](src/README.md). |
 | `src/comptes_demo.sql` | Comptes de démonstration pour se connecter à l'application. |
+| `migrations/` | Scripts de mise à jour d'une base **déjà installée** (sans perte de données). |
+| `mettre_a_jour_base.bat` | Applique tous les scripts de `migrations/` (double-clic, Windows). |
 
 ## Installation
 
@@ -25,6 +27,15 @@ mysql -u root -p pharmastock < src/comptes_demo.sql
 
 > `pharmastock.sql` commence par `DROP DATABASE IF EXISTS pharmastock;` : le relancer réinitialise entièrement la base. Les triggers sont **indispensables** au bon fonctionnement du stock, des ventes et des livraisons.
 
+### Mettre à jour une base déjà installée (coéquipiers)
+
+Après un `git pull`, si de nouveaux scripts sont apparus dans `migrations/`, il suffit de :
+
+- **double-cliquer sur `mettre_a_jour_base.bat`** (il trouve `mysql.exe` dans le PATH, XAMPP, MySQL Server ou WAMP, demande le mot de passe une fois — vide avec XAMPP — puis applique les migrations dans l'ordre) ;
+- ou, à la main : `mysql -u root -p pharmastock < migrations/001_correctifs_peremption_fournisseur.sql`
+
+Les migrations **ne suppriment aucune donnée** et peuvent être relancées sans risque. Options du `.bat` : `mettre_a_jour_base.bat [utilisateur] [port]` (par défaut `root` et `3306`).
+
 ### 2. Application (Windows + Visual Studio 2022)
 
 1. Ouvrir `src/PharmaStock/PharmaStock.sln`.
@@ -32,6 +43,8 @@ mysql -u root -p pharmastock < src/comptes_demo.sql
 3. Restaurer les paquets NuGet (MySql.Data) puis lancer (F5).
 
 **Comptes de démonstration** : `admin / admin123` (administrateur) · `employe / employe123` (employé).
+
+> **Chemins trop longs** : si `git clone` échoue avec *Filename too long*, ou si l'exécutable affiche « Erreur irrécupérable » au démarrage, le dossier du projet est trop profond (limite Windows ≈ 260 caractères). Cloner dans un dossier court (ex. `C:\dev\Pharmastock`) ou activer `git config --global core.longpaths true`.
 
 ## Fonctionnalités
 
