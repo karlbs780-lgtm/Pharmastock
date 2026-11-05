@@ -5,15 +5,52 @@ Imports MySql.Data.MySqlClient
 ' Enregistrement des ventes / factures (transaction), avec FEFO et ordonnancier.
 Public Class VenteRepository
 
-    ' Retourne le lot FEFO disponible (peremption la plus proche) pour un produit, ou Nothing.
-    Public Function LotFefo(idProduit As Integer) As DataRow
-        Dim dt As DataTable = Database.ExecuterTable(
+    ' Retourne les lots vendables d'un produit, dans l'ordre FEFO (peremption la plus
+    ' proche d'abord). Les lots perimes (date de peremption atteinte) sont exclus.
+    Public Function LotsFefo(idProduit As Integer) As DataTable
+        Return Database.ExecuterTable(
             "SELECT id_lot, numero_lot, quantite, date_peremption FROM lot " &
             "WHERE id_produit = @id AND statut = 'actif' AND quantite > 0 " &
-            "ORDER BY date_peremption LIMIT 1",
+            "AND date_peremption > CURDATE() " &
+            "ORDER BY date_peremption, id_lot",
             New MySqlParameter("@id", idProduit))
+    End Function
+
+    ' Retourne le lot FEFO disponible (peremption la plus proche) pour un produit, ou Nothing.
+    Public Function LotFefo(idProduit As Integer) As DataRow
+        Dim dt As DataTable = LotsFefo(idProduit)
         If dt.Rows.Count = 0 Then Return Nothing
         Return dt.Rows(0)
+    End Function
+
+    ' Repartit une quantite demandee sur les lots selon le FEFO : on vide d'abord le lot
+    ' le plus proche de la peremption, puis le suivant, etc. "dejaReserve" donne, par
+    ' id_lot, les quantites deja prises par les lignes en cours de saisie.
+    ' Retourne la liste (lot, quantite) ; leve une exception si le stock total est insuffisant.
+    Public Function RepartirFefo(idProduit As Integer, quantite As Integer,
+                                 dejaReserve As Dictionary(Of Integer, Integer)) As List(Of Tuple(Of DataRow, Integer))
+        Dim resultat As New List(Of Tuple(Of DataRow, Integer))()
+        Dim reste As Integer = quantite
+        Dim totalDispo As Integer = 0
+
+        For Each lot As DataRow In LotsFefo(idProduit).Rows
+            Dim idLot As Integer = Convert.ToInt32(lot("id_lot"))
+            Dim dispo As Integer = Convert.ToInt32(lot("quantite"))
+            If dejaReserve IsNot Nothing AndAlso dejaReserve.ContainsKey(idLot) Then dispo -= dejaReserve(idLot)
+            If dispo <= 0 Then Continue For
+            totalDispo += dispo
+            If reste > 0 Then
+                Dim pris As Integer = Math.Min(dispo, reste)
+                resultat.Add(Tuple.Create(lot, pris))
+                reste -= pris
+            End If
+        Next
+
+        If reste > 0 Then
+            Throw New InvalidOperationException(
+                $"Stock insuffisant : {totalDispo} unité(s) disponible(s) (lots non périmés), {quantite} demandée(s).")
+        End If
+        Return resultat
     End Function
 
     ' Enregistre une vente complete : en-tete, lignes, mouvements de sortie, et

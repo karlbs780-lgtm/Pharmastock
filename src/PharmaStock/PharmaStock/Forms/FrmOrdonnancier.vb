@@ -13,7 +13,8 @@ Public Class FrmOrdonnancier
         ClientSize = New Size(860, 480)
         StartPosition = FormStartPosition.CenterParent
 
-        Dim panneau As New Panel With {.Dock = DockStyle.Top, .Height = 44}
+        ' Largeur initiale = largeur du formulaire (bouton ancre a droite).
+        Dim panneau As New Panel With {.Dock = DockStyle.Top, .Height = 44, .Width = ClientSize.Width}
         Dim lbl As New Label With {.Text = "Registre des délivrances (lecture seule, conservation 10 ans)",
                                    .Location = New Point(12, 13), .AutoSize = True}
         Dim btnActualiser As New Button With {.Text = "Actualiser", .Location = New Point(740, 9), .Width = 100, .Anchor = AnchorStyles.Top Or AnchorStyles.Right}

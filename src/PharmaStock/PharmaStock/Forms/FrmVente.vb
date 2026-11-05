@@ -60,7 +60,9 @@ Public Class FrmVente
         _grille.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         _grille.RowHeadersVisible = False
 
-        Dim panBas As New Panel With {.Dock = DockStyle.Bottom, .Height = 56}
+        ' Largeur initiale = largeur du formulaire : sinon le bouton ancre a droite
+        ' (ajoute alors que le panneau fait 200 px) se retrouve hors de la fenetre.
+        Dim panBas As New Panel With {.Dock = DockStyle.Bottom, .Height = 56, .Width = ClientSize.Width}
         Dim btnSupprLigne As New Button With {.Text = "Retirer la ligne", .Location = New Point(12, 12), .Width = 130}
         panBas.Controls.Add(btnSupprLigne)
         panBas.Controls.Add(New Label With {.Text = "Remise (FCFA)", .Location = New Point(300, 16), .AutoSize = True})
@@ -120,15 +122,20 @@ Public Class FrmVente
         Dim prix As Decimal = Convert.ToDecimal(infos(0)("prix_vente"))
         Dim reglemente As Boolean = Convert.ToBoolean(infos(0)("reglemente"))
 
-        ' Choix du lot selon le FEFO (peremption la plus proche).
-        Dim lot As DataRow = _repoVente.LotFefo(idProduit)
-        If lot Is Nothing Then
-            MessageBox.Show("Aucun stock disponible pour ce produit.", "PharmaStock") : Return
-        End If
-        Dim dispo As Integer = Convert.ToInt32(lot("quantite"))
-        If dispo < qte Then
-            MessageBox.Show($"Stock insuffisant sur le lot FEFO (disponible : {dispo}).", "PharmaStock") : Return
-        End If
+        ' Repartition FEFO sur un ou plusieurs lots non perimes, en tenant compte
+        ' des quantites deja reservees par les lignes en cours de saisie.
+        Dim reserve As New Dictionary(Of Integer, Integer)()
+        For Each l In _lignes
+            If reserve.ContainsKey(l.IdLot) Then reserve(l.IdLot) += l.Quantite Else reserve(l.IdLot) = l.Quantite
+        Next
+        Dim repartition As List(Of Tuple(Of DataRow, Integer))
+        Try
+            repartition = _repoVente.RepartirFefo(idProduit, qte, reserve)
+        Catch ex As InvalidOperationException
+            MessageBox.Show(ex.Message, "PharmaStock") : Return
+        Catch ex As Exception
+            MessageBox.Show("Erreur : " & ex.Message, "PharmaStock", MessageBoxButtons.OK, MessageBoxIcon.Error) : Return
+        End Try
 
         Dim presc As String = String.Empty
         Dim pat As String = String.Empty
@@ -143,16 +150,19 @@ Public Class FrmVente
             End If
         End If
 
-        _lignes.Add(New LigneVente With {
-            .IdProduit = idProduit,
-            .Produit = _cboProduit.Text,
-            .IdLot = Convert.ToInt32(lot("id_lot")),
-            .NumeroLot = Convert.ToString(lot("numero_lot")),
-            .Quantite = qte,
-            .PrixUnitaire = prix,
-            .Reglemente = reglemente,
-            .Prescripteur = presc,
-            .Patient = pat})
+        ' Une ligne de vente par lot utilise (tracabilite lot par lot).
+        For Each part In repartition
+            _lignes.Add(New LigneVente With {
+                .IdProduit = idProduit,
+                .Produit = _cboProduit.Text,
+                .IdLot = Convert.ToInt32(part.Item1("id_lot")),
+                .NumeroLot = Convert.ToString(part.Item1("numero_lot")),
+                .Quantite = part.Item2,
+                .PrixUnitaire = prix,
+                .Reglemente = reglemente,
+                .Prescripteur = presc,
+                .Patient = pat})
+        Next
 
         RafraichirGrille()
         _numQte.Value = 0D

@@ -93,7 +93,8 @@ Public Class FrmLivraison
         _grille.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         _grille.RowHeadersVisible = False
 
-        Dim panBas As New Panel With {.Dock = DockStyle.Bottom, .Height = 52}
+        ' Largeur initiale = largeur du formulaire (bouton ancre a droite).
+        Dim panBas As New Panel With {.Dock = DockStyle.Bottom, .Height = 52, .Width = ClientSize.Width}
         Dim btnSupprLigne As New Button With {.Text = "Retirer la ligne", .Location = New Point(12, 10), .Width = 130}
         Dim btnValider As New Button With {.Text = "Valider la livraison", .Location = New Point(656, 9), .Width = 190, .Height = 32,
                                            .Anchor = AnchorStyles.Top Or AnchorStyles.Right}
@@ -111,7 +112,7 @@ Public Class FrmLivraison
 
     Private Sub ChargerCombos()
         Try
-            _cboFournisseur.DataSource = _repoFournisseur.ListerActifs()
+            _cboFournisseur.DataSource = _repoFournisseur.ListerAgrees()
             _cboFournisseur.DisplayMember = "nom"
             _cboFournisseur.ValueMember = "id_fournisseur"
 
@@ -137,6 +138,10 @@ Public Class FrmLivraison
         End If
         If conforme < 0 OrElse conforme > livree Then
             MessageBox.Show("La quantité conforme doit être comprise entre 0 et la quantité livrée.", "PharmaStock") : Return
+        End If
+        If _dtpPeremption.Value.Date <= Date.Today OrElse _dtpPeremption.Value.Date <= _dtpDate.Value.Date Then
+            MessageBox.Show("Lot périmé : la date de péremption doit être postérieure à aujourd'hui et à la date de livraison.",
+                            "PharmaStock") : _dtpPeremption.Focus() : Return
         End If
 
         _lignes.Add(New LigneLivraison With {

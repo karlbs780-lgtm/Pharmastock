@@ -26,6 +26,8 @@ Partial Class FrmProduitEdition
     Friend WithEvents numPrixVente As NumericUpDown
     Friend WithEvents lblSeuil As Label
     Friend WithEvents numSeuil As NumericUpDown
+    Friend WithEvents lblTableau As Label
+    Friend WithEvents cboTableau As ComboBox
     Friend WithEvents chkOrdonnance As CheckBox
     Friend WithEvents chkActif As CheckBox
     Friend WithEvents btnOk As Button
@@ -61,6 +63,8 @@ Partial Class FrmProduitEdition
         Me.numPrixVente = New NumericUpDown()
         Me.lblSeuil = New Label()
         Me.numSeuil = New NumericUpDown()
+        Me.lblTableau = New Label()
+        Me.cboTableau = New ComboBox()
         Me.chkOrdonnance = New CheckBox()
         Me.chkActif = New CheckBox()
         Me.btnOk = New Button()
@@ -104,18 +108,22 @@ Partial Class FrmProduitEdition
         Me.numSeuil.Location = New Point(150, 306) : Me.numSeuil.Size = New Size(220, 23)
         Me.numSeuil.Maximum = 1000000D
         '
-        Me.chkOrdonnance.AutoSize = True : Me.chkOrdonnance.Location = New Point(150, 338) : Me.chkOrdonnance.Text = "Soumis à ordonnance"
-        Me.chkActif.AutoSize = True : Me.chkActif.Location = New Point(150, 362) : Me.chkActif.Text = "Produit actif"
+        Me.lblTableau.AutoSize = True : Me.lblTableau.Location = New Point(18, 340) : Me.lblTableau.Text = "Tableau (réglementé)"
+        Me.cboTableau.Location = New Point(150, 338) : Me.cboTableau.Size = New Size(220, 23)
+        Me.cboTableau.DropDownStyle = ComboBoxStyle.DropDownList
         '
-        Me.btnOk.Location = New Point(150, 396) : Me.btnOk.Size = New Size(105, 32) : Me.btnOk.Text = "Enregistrer"
-        Me.btnAnnuler.Location = New Point(265, 396) : Me.btnAnnuler.Size = New Size(105, 32) : Me.btnAnnuler.Text = "Annuler"
+        Me.chkOrdonnance.AutoSize = True : Me.chkOrdonnance.Location = New Point(150, 370) : Me.chkOrdonnance.Text = "Soumis à ordonnance"
+        Me.chkActif.AutoSize = True : Me.chkActif.Location = New Point(150, 394) : Me.chkActif.Text = "Produit actif"
+        '
+        Me.btnOk.Location = New Point(150, 428) : Me.btnOk.Size = New Size(105, 32) : Me.btnOk.Text = "Enregistrer"
+        Me.btnAnnuler.Location = New Point(265, 428) : Me.btnAnnuler.Size = New Size(105, 32) : Me.btnAnnuler.Text = "Annuler"
         Me.btnAnnuler.DialogResult = DialogResult.Cancel
         '
         Me.AcceptButton = Me.btnOk
         Me.CancelButton = Me.btnAnnuler
         Me.AutoScaleDimensions = New SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = AutoScaleMode.Font
-        Me.ClientSize = New Size(390, 448)
+        Me.ClientSize = New Size(390, 480)
         Me.Controls.Add(Me.lblCodeBarres) : Me.Controls.Add(Me.txtCodeBarres)
         Me.Controls.Add(Me.lblNom) : Me.Controls.Add(Me.txtNom)
         Me.Controls.Add(Me.lblDci) : Me.Controls.Add(Me.txtDci)
@@ -126,6 +134,7 @@ Partial Class FrmProduitEdition
         Me.Controls.Add(Me.lblPrixAchat) : Me.Controls.Add(Me.numPrixAchat)
         Me.Controls.Add(Me.lblPrixVente) : Me.Controls.Add(Me.numPrixVente)
         Me.Controls.Add(Me.lblSeuil) : Me.Controls.Add(Me.numSeuil)
+        Me.Controls.Add(Me.lblTableau) : Me.Controls.Add(Me.cboTableau)
         Me.Controls.Add(Me.chkOrdonnance) : Me.Controls.Add(Me.chkActif)
         Me.Controls.Add(Me.btnOk) : Me.Controls.Add(Me.btnAnnuler)
         Me.FormBorderStyle = FormBorderStyle.FixedDialog

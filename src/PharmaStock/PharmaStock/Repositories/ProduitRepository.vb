@@ -9,7 +9,7 @@ Public Class ProduitRepository
     Public Function Lister(Optional recherche As String = "") As DataTable
         Dim sql As String =
             "SELECT id_produit, code_barres, nom_commercial, dci, forme, dosage, numero_amm, " &
-            "prix_achat, prix_vente, seuil_min, statut_homologation, sur_ordonnance, actif " &
+            "prix_achat, prix_vente, seuil_min, statut_homologation, sur_ordonnance, id_tableau, actif " &
             "FROM produit "
 
         If String.IsNullOrWhiteSpace(recherche) Then
@@ -28,12 +28,17 @@ Public Class ProduitRepository
             "FROM produit WHERE actif = 1 ORDER BY nom_commercial")
     End Function
 
+    ' Tableaux de substances reglementees (I a IV) pour la saisie d'un produit.
+    Public Function ListerTableaux() As DataTable
+        Return Database.ExecuterTable("SELECT id_tableau, libelle FROM tableau_substance ORDER BY id_tableau")
+    End Function
+
     ' Insere un produit ; retourne le nombre de lignes affectees.
     Public Function Inserer(p As Produit) As Integer
         Dim sql As String =
             "INSERT INTO produit (code_barres, nom_commercial, dci, forme, dosage, numero_amm, " &
-            "statut_homologation, sur_ordonnance, prix_achat, prix_vente, seuil_min, actif) " &
-            "VALUES (@cb, @nom, @dci, @forme, @dosage, @amm, @statut, @ord, @pa, @pv, @seuil, @actif)"
+            "statut_homologation, sur_ordonnance, id_tableau, prix_achat, prix_vente, seuil_min, actif) " &
+            "VALUES (@cb, @nom, @dci, @forme, @dosage, @amm, @statut, @ord, @tab, @pa, @pv, @seuil, @actif)"
         Return Database.ExecuterNonQuery(sql, Parametres(p))
     End Function
 
@@ -41,7 +46,7 @@ Public Class ProduitRepository
     Public Function Modifier(p As Produit) As Integer
         Dim sql As String =
             "UPDATE produit SET code_barres=@cb, nom_commercial=@nom, dci=@dci, forme=@forme, " &
-            "dosage=@dosage, numero_amm=@amm, statut_homologation=@statut, sur_ordonnance=@ord, " &
+            "dosage=@dosage, numero_amm=@amm, statut_homologation=@statut, sur_ordonnance=@ord, id_tableau=@tab, " &
             "prix_achat=@pa, prix_vente=@pv, seuil_min=@seuil, actif=@actif WHERE id_produit=@id"
 
         Dim ps As New List(Of MySqlParameter)(Parametres(p))
@@ -67,6 +72,7 @@ Public Class ProduitRepository
             New MySqlParameter("@amm", ValeurOuNull(p.NumeroAmm)),
             New MySqlParameter("@statut", p.StatutHomologation),
             New MySqlParameter("@ord", p.SurOrdonnance),
+            New MySqlParameter("@tab", If(p.IdTableau.HasValue, CObj(p.IdTableau.Value), DBNull.Value)),
             New MySqlParameter("@pa", p.PrixAchat),
             New MySqlParameter("@pv", p.PrixVente),
             New MySqlParameter("@seuil", p.SeuilMin),

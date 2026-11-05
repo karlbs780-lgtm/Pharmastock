@@ -61,7 +61,9 @@ Partial Class FrmLogin
         '
         Me.lblMessage.ForeColor = Color.Firebrick
         Me.lblMessage.Location = New Point(28, 232)
-        Me.lblMessage.MaximumSize = New Size(324, 0)
+        ' Pas de MaximumSize (324, 0) : apres mise a l'echelle DPI la hauteur
+        ' maximale devenait 0 et le message d'erreur etait invisible.
+        Me.lblMessage.AutoSize = False
         Me.lblMessage.Size = New Size(324, 40)
         '
         Me.AcceptButton = Me.btnConnexion
