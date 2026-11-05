@@ -15,6 +15,34 @@ Partial Public Class FrmPrincipal
         OuvrirEnfant(New FrmProduits())
     End Sub
 
+    Private Sub mnuFournisseurs_Click(sender As Object, e As EventArgs) Handles mnuFournisseurs.Click
+        OuvrirEnfant(New FrmFournisseurs())
+    End Sub
+
+    Private Sub mnuClients_Click(sender As Object, e As EventArgs) Handles mnuClients.Click
+        OuvrirEnfant(New FrmClients())
+    End Sub
+
+    Private Sub mnuLivraison_Click(sender As Object, e As EventArgs) Handles mnuLivraison.Click
+        OuvrirEnfant(New FrmLivraison(_utilisateur))
+    End Sub
+
+    Private Sub mnuVente_Click(sender As Object, e As EventArgs) Handles mnuVente.Click
+        OuvrirEnfant(New FrmVente(_utilisateur))
+    End Sub
+
+    Private Sub mnuEtatStock_Click(sender As Object, e As EventArgs) Handles mnuEtatStock.Click
+        OuvrirEnfant(New FrmStock())
+    End Sub
+
+    Private Sub mnuTableauBord_Click(sender As Object, e As EventArgs) Handles mnuTableauBord.Click
+        OuvrirEnfant(New FrmTableauBord())
+    End Sub
+
+    Private Sub mnuOrdonnancier_Click(sender As Object, e As EventArgs) Handles mnuOrdonnancier.Click
+        OuvrirEnfant(New FrmOrdonnancier())
+    End Sub
+
     Private Sub mnuQuitter_Click(sender As Object, e As EventArgs) Handles mnuQuitter.Click
         Close()
     End Sub

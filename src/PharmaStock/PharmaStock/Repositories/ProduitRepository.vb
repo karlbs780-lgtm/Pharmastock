@@ -21,6 +21,13 @@ Public Class ProduitRepository
         Return Database.ExecuterTable(sql, New MySqlParameter("@r", "%" & recherche & "%"))
     End Function
 
+    ' Liste les produits actifs pour les ecrans de vente (prix + indicateur reglemente).
+    Public Function ListerActifs() As DataTable
+        Return Database.ExecuterTable(
+            "SELECT id_produit, nom_commercial, prix_vente, (id_tableau IS NOT NULL) AS reglemente " &
+            "FROM produit WHERE actif = 1 ORDER BY nom_commercial")
+    End Function
+
     ' Insere un produit ; retourne le nombre de lignes affectees.
     Public Function Inserer(p As Produit) As Integer
         Dim sql As String =

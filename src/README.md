@@ -40,13 +40,22 @@ Repositories/              Accès aux données par entité (CRUD)
 Forms/                     Interfaces : connexion, menu, produits, édition
 ```
 
-## Écrans déjà fonctionnels
+## Écrans fonctionnels
 
 - **Connexion** (`FrmLogin`) — authentification sur la table `utilisateur`.
 - **Menu principal** (`FrmPrincipal`) — conteneur MDI, affiche l'utilisateur connecté.
-- **Gestion des produits** (`FrmProduits` + `FrmProduitEdition`) — liste, recherche, ajout, modification, désactivation.
+- **Produits** (`FrmProduits` + `FrmProduitEdition`) — liste, recherche, CRUD.
+- **Fournisseurs** (`FrmFournisseurs` + `FrmFournisseurEdition`) — CRUD.
+- **Clients** (`FrmClients` + `FrmClientEdition`) — liste, ajout, modification.
+- **Livraison fournisseur** (`FrmLivraison`) — saisie d'un bon de livraison ; crée/alimente les lots et génère les entrées en stock.
+- **Vente / Facturation** (`FrmVente`) — choix du lot en **FEFO**, calcul du total, et **passage automatique à l'ordonnancier** pour les substances réglementées.
+- **État du stock** (`FrmStock`) — stock par produit, lots, alertes rupture et péremption.
+- **Tableau de bord** (`FrmTableauBord`) — ruptures et péremptions à l'écran.
+- **Ordonnancier** (`FrmOrdonnancier`) — consultation en lecture seule.
 
-Les modules Stock, Ventes/Facturation et Livraisons sont prévus (menus grisés) et seront ajoutés sur le même modèle (Model → Repository → Form).
+## Important — déclencheurs requis
+
+Les écrans **Livraison** et **Vente** insèrent des mouvements dans `mouvement_stock` et s'appuient sur les **triggers** (`pharmastock_triggers_et_donnees_test.sql`) pour mettre à jour `lot.quantite` et contrôler le stock. Installer ce script avant de tester ces écrans.
 
 ## Remarque
 
