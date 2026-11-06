@@ -6,12 +6,12 @@
 --  Ce script ne supprime AUCUNE donnee : il remplace seulement deux
 --  declencheurs (triggers). Il peut etre relance sans risque.
 --
---      mysql -u root -p pharmastock < migrations/001_correctifs_peremption_fournisseur.sql
+--      mysql -u root -p pharmastock < base/mise_a_jour_01.sql
 --
---  (ou double-cliquer sur mettre_a_jour_base.bat a la racine du depot)
+--  (ou double-cliquer sur base/mettre_a_jour_base.bat)
 --
---  Une base creee a partir de zero avec pharmastock.sql puis
---  pharmastock_triggers_et_donnees_test.sql contient deja ces triggers.
+--  Une base creee a partir de zero avec 1_schema.sql puis
+--  2_triggers_et_donnees_test.sql contient deja ces triggers.
 -- =====================================================================
 
 USE pharmastock;
