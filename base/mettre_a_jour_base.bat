@@ -2,7 +2,7 @@
 setlocal EnableDelayedExpansion
 rem =====================================================================
 rem  PharmaStock - Mise a jour d'une base existante (sans perte de donnees)
-rem  Applique, dans l'ordre, tous les scripts du dossier migrations\.
+rem  Applique, dans l'ordre, tous les scripts mise_a_jour_*.sql de ce dossier.
 rem  Usage : double-clic, ou   mettre_a_jour_base.bat [utilisateur] [port]
 rem =====================================================================
 
@@ -44,7 +44,7 @@ if not defined MYSQL_PWD (
 echo.
 
 set /a NB=0
-for %%F in (migrations\*.sql) do (
+for %%F in (mise_a_jour_*.sql) do (
     echo --- Application de %%~nxF
     "%MYSQL_EXE%" -u %MYSQL_USER% "--password=!MYSQL_PWD!" -h 127.0.0.1 -P %MYSQL_PORT% --default-character-set=utf8mb4 pharmastock < "%%F"
     if errorlevel 1 (

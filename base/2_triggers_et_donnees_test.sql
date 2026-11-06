@@ -1,7 +1,7 @@
 -- =====================================================================
 --  PharmaStock — Declencheurs (triggers) + jeu de donnees de test
---  A executer APRES pharmastock.sql, sur la base fraichement creee.
---    mysql -u root -p pharmastock < pharmastock_triggers_et_donnees_test.sql
+--  A executer APRES 1_schema.sql, sur la base fraichement creee.
+--    mysql -u root -p pharmastock < base/2_triggers_et_donnees_test.sql
 --  (les INSERT de test supposent une base vide : les identifiants
 --   auto-increment commencent a 1.)
 -- =====================================================================

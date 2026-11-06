@@ -1,6 +1,6 @@
 -- =====================================================================
 --  PharmaStock — Comptes de demonstration pour l'application VB.NET
---  A executer APRES pharmastock.sql (et, si souhaite, les donnees de test).
+--  A executer APRES 1_schema.sql (et, si souhaite, 2_triggers_et_donnees_test.sql).
 --
 --  L'application hache les mots de passe en SHA-256 (voir SecurityHelper.vb).
 --  Ce script (re)definit deux comptes avec des mots de passe connus :
